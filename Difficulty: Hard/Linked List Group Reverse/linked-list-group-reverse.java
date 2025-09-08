@@ -15,42 +15,24 @@ class Solution {
     public Node reverseKGroup(Node head, int k) {
         if (head == null || k <= 1) return head;
 
-        Node dummy = new Node(0);
-        dummy.next = head;
-        Node prevGroupEnd = dummy;
-        Node curr = head;
+        Node curr = head, prev = null, next = null;
+        int count = 0;
 
-        while (curr != null) {
-            Node groupStart = curr;
-            Node groupEnd = curr;
-            int count = 1;
-            while (count < k && groupEnd.next != null) {
-                groupEnd = groupEnd.next;
-                count++;
-            }
-
-            Node nextGroupStart = groupEnd.next;
-            reverse(groupStart, groupEnd);
-            prevGroupEnd.next = groupEnd;
-            groupStart.next = nextGroupStart;
-
-            prevGroupEnd = groupStart;
-            curr = nextGroupStart;
-        }
-
-        return dummy.next;
-    }
-
-    private void reverse(Node start, Node end) {
-        Node prev = null;
-        Node curr = start;
-        Node stop = end.next;
-
-        while (curr != stop) {
-            Node next = curr.next;
+        // Reverse up to k nodes (or until list ends)
+        while (curr != null && count < k) {
+            next = curr.next;
             curr.next = prev;
             prev = curr;
             curr = next;
+            count++;
         }
+
+        // head is now the last node in the reversed group
+        if (next != null) {
+            head.next = reverseKGroup(next, k);
+        }
+
+        // prev is the new head of this group
+        return prev;
     }
 }
